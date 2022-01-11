@@ -1,0 +1,17 @@
+{
+    "os": "Windows-10-10.0.22000-SP0",
+    "python": "3.8.12",
+    "heartbeatAt": "2022-01-05T15:03:34.782999",
+    "startedAt": "2022-01-05T15:03:26.298397",
+    "docker": null,
+    "cpu_count": 8,
+    "cuda": null,
+    "args": [
+        "run"
+    ],
+    "state": "running",
+    "program": "C:\\Users\\Juan\\anaconda3\\Scripts\\kedro.exe\\__main__.py",
+    "host": "DESKTOP-SUMRIN3",
+    "username": "Juan",
+    "executable": "c:\\users\\juan\\anaconda3\\python.exe"
+}
