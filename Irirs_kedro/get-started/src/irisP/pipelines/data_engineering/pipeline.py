@@ -42,12 +42,9 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=clean_data,
-                inputs=[
-                    "params:dataset_name",
-                    "params:extension_task",
-                    "params:extension_type",
-                    "labeled_dataset"
-                ],
+                inputs=["params: dataset",
+                        "params:multilingual_task",
+                        "labeled_dataset"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
                 ),
@@ -58,7 +55,7 @@ def create_pipeline(**kwargs):
                 inputs=["cleaned_dataset",
                         "params:model_name",
                         "params:tokenize_batch_size",
-                        "params:tokenizer_max_length"],
+                        "params:sentence_max_length"],
                 outputs=dict(
                     dataset="dataset"
                 ),
