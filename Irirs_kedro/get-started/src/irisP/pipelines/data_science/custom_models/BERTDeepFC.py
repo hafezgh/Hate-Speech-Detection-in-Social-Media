@@ -7,7 +7,10 @@ from torch import nn
 
 class BERTDeepFC(nn.Module):
 
-    def __init__(self, model_name='bert-base-uncased', device='cuda', num_classes=3):
+    def __init__(self,
+                 model_name='bert-base-uncased',
+                 device='cuda',
+                 num_classes=3):
         super(BERTDeepFC, self).__init__()
         self.bert = BertModel.from_pretrained(model_name)
         self.leaky_relu = nn.LeakyReLU()

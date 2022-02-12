@@ -197,6 +197,8 @@ def _classic_evaluate(model, dataloader, batch_size, device, cross_entropy, opti
 def train(
         BERT_model: str,
         model_name: str,
+        dataset: str,
+        sentence_max_length: int,
         training_type: str,
         train_args: Dict[str, Any],
         device: str,
@@ -204,14 +206,33 @@ def train(
         train_dataset: datasets.Dataset,
         eval_dataset: datasets.Dataset,
 ) -> Dict[str, Any]:
+
+    # Set number of classes
+    if dataset in ["davidson", "waseem", "multilingual"]:
+        num_classes = 3
+    elif dataset in ["sentiment"]:
+        num_classes = 2
+    else:
+        raise Exception("Unclear number of classes")
+
+    # Get BERT model
     if BERT_model == "shallow_fc":
-        model = BERTShallowFC(model_name=model_name, device=device, num_classes=num_classes)
+        model = BERTShallowFC(model_name=model_name,
+                              device=device,
+                              num_classes=num_classes)
     elif BERT_model == "deep_fc":
-        model = BERTDeepFC(model_name=model_name, device=device, num_classes=num_classes)
+        model = BERTDeepFC(model_name=model_name,
+                           device=device,
+                           num_classes=num_classes)
     elif BERT_model == "rnn":
-        model = BERTRNN(model_name=model_name, device=device, num_classes=num_classes)
+        model = BERTRNN(model_name=model_name,
+                        device=device,
+                        num_classes=num_classes)
     elif BERT_model == "cnn":
-        model = BERTCNN(model_name=model_name, device=device, num_classes=num_classes)
+        model = BERTCNN(model_name=model_name,
+                        device=device,
+                        max_length=sentence_max_length,
+                        num_classes=num_classes)
     else:
         raise Exception("Unknown model")
 

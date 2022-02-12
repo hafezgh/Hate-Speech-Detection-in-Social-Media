@@ -1,18 +1,16 @@
 # Parameters for the example pipeline. Feel free to delete these once you
 # remove the example pipeline from hooks.py and the example nodes in
 # `src/pipelines/`
+dataset: davidson
 train_size_ratio: 0.8
 test_size_ratio: 0.5
 model_name: bert-base-uncased
-tokenizer_max_length: 36
+sentence_max_length: 36
 tokenize_batch_size: 4
 device: cpu
 BERT_model: shallow_fc
 training_type: transformers
-num_classes: 3
-extension_type: none
-extension_task: none
-dataset_name: davidson
+multilingual_task: task1
 train_args:
   output_dir: ./results          # output directory
   num_train_epochs: 3              # total number of training epochs

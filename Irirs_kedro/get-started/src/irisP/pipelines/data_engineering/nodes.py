@@ -37,8 +37,6 @@ import re
 import string
 import pandas as pd
 import emoji as emoji
-import matplotlib.pyplot as plt
-from kedro.extras.datasets.matplotlib import MatplotlibWriter
 from sklearn.preprocessing import LabelEncoder
 from transformers import BertTokenizer
 from datasets import Dataset
@@ -63,20 +61,19 @@ def _tokenizer_wrapper(batch, tokenizer, tokenizer_max_length):
 
 
 def clean_data(
-        dataset_name: str,
-        extension_task: str,
-        extension_type: str,
+        dataset: str,
+        multilingual_task: str,
         data: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
-    :param dataset_name:
-    :param extension_task:
-    :param extension_type:
+    :param dataset:
+    :param multilingual_task:
     :param data:
     :return:
     """
-    if dataset_name == 'davidson':
+
+    if dataset == 'davidson':
         data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
         tweets = data['tweet'].tolist()
         classes = data['class']
@@ -123,10 +120,10 @@ def clean_data(
             'class': classes
         })
 
-    elif dataset_name == 'waseem':
+    elif dataset == 'waseem':
         pass
-    elif dataset_name == 'multilingual_extension':
-        assert(extension_task == 'task1' or extension_task == 'task2')
+    elif dataset == 'multilingual_extension':
+        assert(multilingual_task == 'task1' or multilingual_task == 'task2')
 
         # Get datasets
         url_english_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_en_train_new_a' \
@@ -182,17 +179,15 @@ def clean_data(
         le = LabelEncoder()
         labels_test['task2'] = le.fit_transform(labels_test['task2'])
 
-        # data = data.drop(columns=['tweet_id', 'task1', 'task2', 'language', 'ID'])
-
         df = pd.DataFrame.from_dict({
             'tweets': data['text'],
-            'class': data[extension_task]
+            'class': data[multilingual_task]
         })
 
-    elif extension_type == 'sentiment':
+    elif dataset == 'sentiment':
         pass
     else:
-        raise Exception('Unknown dataset name.')
+        raise Exception("Unknown dataset")
 
     return dict(
         cleaned_dataset=df
@@ -245,6 +240,7 @@ def split_data(dataset: pd.DataFrame,
     :param test_size_ratio:
     :return:
     """
+
     train_testvalid = dataset.train_test_split(train_size=train_size_ratio)
     test_valid = train_testvalid['test'].train_test_split(test_size=test_size_ratio)
 
