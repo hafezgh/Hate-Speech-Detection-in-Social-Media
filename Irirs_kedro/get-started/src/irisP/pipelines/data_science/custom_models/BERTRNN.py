@@ -7,13 +7,16 @@ from torch import nn
 
 class BERTRNN(nn.Module):
 
-    def __init__(self, model_name='bert-base-uncased', device='cuda'):
+    def __init__(self,
+                 model_name='bert-base-uncased',
+                 device='cuda',
+                 num_classes=3):
         super(BERTRNN, self).__init__()
         self.bert = BertModel.from_pretrained(model_name)
         # RNN
         self.lstm = nn.LSTM(768, 256, batch_first=True, bidirectional=True).to(device)
         # FC
-        self.fc = nn.Linear(256*2, 3).to(device)
+        self.fc = nn.Linear(256*2, num_classes).to(device)
         self.softmax = nn.LogSoftmax(dim=1).to(device)
 
     def forward(self, input_ids, attention_mask, labels=None):

@@ -44,6 +44,8 @@ def create_pipeline(**kwargs):
                 func=train,
                 inputs=["params:BERT_model",
                         "params:model_name",
+                        "params:dataset",
+                        "params:sentence_max_length",
                         "params:training_type",
                         "params:train_args",
                         "params:device",

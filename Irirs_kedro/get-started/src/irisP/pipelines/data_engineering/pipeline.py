@@ -34,7 +34,7 @@ Delete this when you start working on your own Kedro project.
 
 from kedro.pipeline import Pipeline, node
 
-from .nodes import split_data, clean_data, prepare_data, plot_lengths, plot_class_distributions
+from .nodes import split_data, clean_data, prepare_data
 
 
 def create_pipeline(**kwargs):
@@ -42,7 +42,9 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=clean_data,
-                inputs=["labeled_dataset"],
+                inputs=["params: dataset",
+                        "params:multilingual_task",
+                        "labeled_dataset"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
                 ),
@@ -53,7 +55,7 @@ def create_pipeline(**kwargs):
                 inputs=["cleaned_dataset",
                         "params:model_name",
                         "params:tokenize_batch_size",
-                        "params:tokenizer_max_length"],
+                        "params:sentence_max_length"],
                 outputs=dict(
                     dataset="dataset"
                 ),

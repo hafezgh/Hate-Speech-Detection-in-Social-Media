@@ -6,10 +6,13 @@ from torch import nn
 
 
 class BERTShallowFC(nn.Module):
-    def __init__(self, model_name='bert-base-uncased', device='cuda'):
+    def __init__(self,
+                 model_name='bert-base-uncased',
+                 device='cuda',
+                 num_classes=3):
         super(BERTShallowFC, self).__init__()
         self.bert = BertModel.from_pretrained(model_name)
-        self.fc = nn.Linear(768, 3).to(device)  # (BERT CLS size, num_classes)
+        self.fc = nn.Linear(768, num_classes).to(device)  # (BERT CLS size, num_classes)
         self.softmax = nn.LogSoftmax(dim=1).to(device)
 
     def forward(self, input_ids, attention_mask, labels=None):
