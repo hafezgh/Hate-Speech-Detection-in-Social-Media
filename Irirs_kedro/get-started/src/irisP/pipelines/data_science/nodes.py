@@ -207,7 +207,7 @@ def train(
 ) -> Dict[str, Any]:
 
     # Set number of classes
-    if dataset in ["davidson", "waseem", "multilingual"]:
+    if dataset in ["davidson", "waseem", "multilingual_extension"]:
         num_classes = 3
     elif dataset in ["sentiment"]:
         num_classes = 2
