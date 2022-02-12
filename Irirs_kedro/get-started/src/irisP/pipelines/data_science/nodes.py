@@ -202,6 +202,7 @@ def train(
         training_type: str,
         train_args: Dict[str, Any],
         device: str,
+        num_classes: int,
         train_dataset: datasets.Dataset,
         eval_dataset: datasets.Dataset,
 ) -> Dict[str, Any]:
@@ -336,10 +337,11 @@ def predict(model: Any,
 ) -> Dict[str, Any]:
     """
 
-    :param trainer:
+    :param model:
     :param test_ds:
-    :param model_name:
-    :param tokenize_batch_size:
+    :param training_type:
+    :param train_args:
+    :param device:
     :return:
     """
     if training_type == "transformers":
@@ -379,11 +381,14 @@ def predict(model: Any,
     else:
         raise Exception("Unknown training type")
 
-def report_metrics(predictions: Any,
-                   training_type: str
+
+def report_metrics(
+        predictions: Any,
+        training_type: str
     ) -> None:
     """
 
+    :param training_type:
     :param predictions:
     :return:
     """
@@ -393,9 +398,6 @@ def report_metrics(predictions: Any,
 
         # Log the accuracy of the model
         log = logging.getLogger(__name__)
-        log.info(f"Model accuracy on test set: {report['test_accuracy']:.4f}")
-        log.info(f"Model accuracy on test set: {report['test_accuracy']:.4f}")
-        log.info(f"Model accuracy on test set: {report['test_accuracy']:.4f}")
         log.info(f"Model accuracy on test set: {report['test_accuracy']:.4f}")
 
     elif training_type == "classic":

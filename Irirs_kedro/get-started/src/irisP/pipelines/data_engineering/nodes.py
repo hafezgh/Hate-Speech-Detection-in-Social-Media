@@ -67,11 +67,12 @@ def clean_data(
 ) -> Dict[str, pd.DataFrame]:
     """
 
-    :param multilingual_task:
     :param dataset:
+    :param multilingual_task:
     :param data:
     :return:
     """
+
     if dataset == 'davidson':
         data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
         tweets = data['tweet'].tolist()
@@ -118,9 +119,13 @@ def clean_data(
             'tweets': new_values,
             'class': classes
         })
+
     elif dataset == 'waseem':
         pass
-    elif dataset == 'multilingual':
+    elif dataset == 'multilingual_extension':
+        assert(multilingual_task == 'task1' or multilingual_task == 'task2')
+
+        # Get datasets
         url_english_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_en_train_new_a' \
                             '.xlsx?raw=true '
         url_german_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_de_train_new_a' \
@@ -132,15 +137,20 @@ def clean_data(
         url_german_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/german_test_1509.csv?raw=true'
         url_hindi_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hindi_test_1509.csv?raw=true'
 
+        # Read datasets
+        ## English
         data_en = pd.read_excel(url_english_train)
         data_en_test = pd.read_csv(url_english_test)
 
+        ## German
         data_de = pd.read_excel(url_german_train)
         data_de_test = pd.read_csv(url_german_test)
 
+        ## Hindi
         data_hi = pd.read_excel(url_hindi_train)
         data_hi_test = pd.read_csv(url_hindi_test)
 
+        # Set labels
         data_en['language'] = 0
         data_en_test['language'] = 0
 
@@ -174,6 +184,8 @@ def clean_data(
             'class': data[multilingual_task]
         })
 
+    elif dataset == 'sentiment':
+        pass
     else:
         raise Exception("Unknown dataset")
 
@@ -228,6 +240,7 @@ def split_data(dataset: pd.DataFrame,
     :param test_size_ratio:
     :return:
     """
+
     train_testvalid = dataset.train_test_split(train_size=train_size_ratio)
     test_valid = train_testvalid['test'].train_test_split(test_size=test_size_ratio)
 
