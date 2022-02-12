@@ -9,6 +9,10 @@ tokenize_batch_size: 4
 device: cpu
 BERT_model: shallow_fc
 training_type: transformers
+num_classes: 3
+extension_type: none
+extension_task: none
+dataset_name: davidson
 train_args:
   output_dir: ./results          # output directory
   num_train_epochs: 3              # total number of training epochs

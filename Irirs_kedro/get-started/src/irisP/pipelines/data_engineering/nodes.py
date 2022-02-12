@@ -30,6 +30,7 @@ just for illustrating basic Kedro features.
 
 PLEASE DELETE THIS FILE ONCE YOU START WORKING ON YOUR OWN PROJECT!
 """
+import copy
 
 from sklearn.model_selection import train_test_split
 import re
@@ -38,6 +39,7 @@ import pandas as pd
 import emoji as emoji
 import matplotlib.pyplot as plt
 from kedro.extras.datasets.matplotlib import MatplotlibWriter
+from sklearn.preprocessing import LabelEncoder
 from transformers import BertTokenizer
 from datasets import Dataset
 from typing import Any, Dict
@@ -61,105 +63,140 @@ def _tokenizer_wrapper(batch, tokenizer, tokenizer_max_length):
 
 
 def clean_data(
+        dataset_name: str,
+        extension_task: str,
+        extension_type: str,
         data: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
+    :param dataset_name:
+    :param extension_task:
+    :param extension_type:
     :param data:
     :return:
     """
-    data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
-    tweets = data['tweet'].tolist()
-    classes = data['class']
+    if dataset_name == 'davidson':
+        data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
+        tweets = data['tweet'].tolist()
+        classes = data['class']
 
-    new_values = list()
-    # Emoticons
-    emoticons = [':-)', ':)', '(:', '(-:', ':))', '((:', ':-D', ':D', 'X-D', 'XD', 'xD', 'xD', '<3', '</3', ':\*',
-                 ';-)',
-                 ';)', ';-D', ';D', '(;', '(-;', ':-(', ':(', '(:', '(-:', ':,(', ':\'(', ':"(', ':((', ':D', '=D',
-                 '=)',
-                 '(=', '=(', ')=', '=-O', 'O-=', ':o', 'o:', 'O:', 'O:', ':-o', 'o-:', ':P', ':p', ':S', ':s', ':@',
-                 ':>',
-                 ':<', '^_^', '^.^', '>.>', 'T_T', 'T-T', '-.-', '*.*', '~.~', ':*', ':-*', 'xP', 'XP', 'XP', 'Xp',
-                 ':-|',
-                 ':->', ':-<', '$_$', '8-)', ':-P', ':-p', '=P', '=p', ':*)', '*-*', 'B-)', 'O.o', 'X-(', ')-X']
+        new_values = list()
+        # Emoticons
+        emoticons = [':-)', ':)', '(:', '(-:', ':))', '((:', ':-D', ':D', 'X-D', 'XD', 'xD', 'xD', '<3', '</3', ':\*',
+                     ';-)',
+                     ';)', ';-D', ';D', '(;', '(-;', ':-(', ':(', '(:', '(-:', ':,(', ':\'(', ':"(', ':((', ':D', '=D',
+                     '=)',
+                     '(=', '=(', ')=', '=-O', 'O-=', ':o', 'o:', 'O:', 'O:', ':-o', 'o-:', ':P', ':p', ':S', ':s', ':@',
+                     ':>',
+                     ':<', '^_^', '^.^', '>.>', 'T_T', 'T-T', '-.-', '*.*', '~.~', ':*', ':-*', 'xP', 'XP', 'XP', 'Xp',
+                     ':-|',
+                     ':->', ':-<', '$_$', '8-)', ':-P', ':-p', '=P', '=p', ':*)', '*-*', 'B-)', 'O.o', 'X-(', ')-X']
 
-    for value in tweets:
-        # Remove dots
-        text = value.replace(".", "").lower()
-        text = re.sub(r"[^a-zA-Z?.!,¿]+", " ", text)
-        users = re.findall("[@]\w+", text)
-        for user in users:
-            text = text.replace(user, "<user>")
-        urls = re.findall(r'(https?://[^\s]+)', text)
-        if len(urls) != 0:
-            for url in urls:
-                text = text.replace(url, "<url >")
-        for emo in text:
-            if emo in emoji.UNICODE_EMOJI:
+        for value in tweets:
+            # Remove dots
+            text = value.replace(".", "").lower()
+            text = re.sub(r"[^a-zA-Z?.!,¿]+", " ", text)
+            users = re.findall("[@]\w+", text)
+            for user in users:
+                text = text.replace(user, "<user>")
+            urls = re.findall(r'(https?://[^\s]+)', text)
+            if len(urls) != 0:
+                for url in urls:
+                    text = text.replace(url, "<url >")
+            for emo in text:
+                if emo in emoji.UNICODE_EMOJI:
+                    text = text.replace(emo, "<emoticon >")
+            for emo in emoticons:
                 text = text.replace(emo, "<emoticon >")
-        for emo in emoticons:
-            text = text.replace(emo, "<emoticon >")
-        numbers = re.findall('[0-9]+', text)
-        for number in numbers:
-            text = text.replace(number, "<number >")
-        text = text.replace('#', "<hashtag >")
-        text = re.sub(r"([?.!,¿])", r" ", text)
-        text = "".join(l for l in text if l not in string.punctuation)
-        text = re.sub(r'[" "]+', " ", text)
-        new_values.append(text)
+            numbers = re.findall('[0-9]+', text)
+            for number in numbers:
+                text = text.replace(number, "<number >")
+            text = text.replace('#', "<hashtag >")
+            text = re.sub(r"([?.!,¿])", r" ", text)
+            text = "".join(l for l in text if l not in string.punctuation)
+            text = re.sub(r'[" "]+', " ", text)
+            new_values.append(text)
 
-    df = pd.DataFrame.from_dict({
-        'tweets': new_values,
-        'class': classes
-    })
+        df = pd.DataFrame.from_dict({
+            'tweets': new_values,
+            'class': classes
+        })
+
+    elif dataset_name == 'waseem':
+        pass
+    elif dataset_name == 'multilingual_extension':
+        assert(extension_task == 'task1' or extension_task == 'task2')
+
+        # Get datasets
+        url_english_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_en_train_new_a' \
+                            '.xlsx?raw=true '
+        url_german_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_de_train_new_a' \
+                           '.xlsx?raw=true '
+        url_hindi_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_hi_train_a.xlsx' \
+                          '?raw=true '
+        url_english_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/english_test_1509.csv?raw' \
+                           '=true '
+        url_german_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/german_test_1509.csv?raw=true'
+        url_hindi_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hindi_test_1509.csv?raw=true'
+
+        # Read datasets
+        ## English
+        data_en = pd.read_excel(url_english_train)
+        data_en_test = pd.read_csv(url_english_test)
+
+        ## German
+        data_de = pd.read_excel(url_german_train)
+        data_de_test = pd.read_csv(url_german_test)
+
+        ## Hindi
+        data_hi = pd.read_excel(url_hindi_train)
+        data_hi_test = pd.read_csv(url_hindi_test)
+
+        # Set labels
+        data_en['language'] = 0
+        data_en_test['language'] = 0
+
+        data_de['language'] = 1
+        data_de_test['language'] = 1
+
+        data_hi['language'] = 2
+        data_hi_test['language'] = 2
+
+        data = copy.deepcopy(data_en)
+        data = data.append(data_de, ignore_index=True)
+        data = data.append(data_hi, ignore_index=True)
+        data_test = copy.deepcopy(data_en_test)
+        data_test = data_test.append(data_de_test, ignore_index=True)
+        data_test = data_test.append(data_hi_test, ignore_index=True)
+
+        labels = data[['task1', 'task2', 'language']]
+        le = LabelEncoder()
+        labels['task1'] = le.fit_transform(labels['task1'])
+        le = LabelEncoder()
+        labels['task2'] = le.fit_transform(labels['task2'])
+
+        labels_test = data_test[['task1', 'task2', 'language']]
+        le = LabelEncoder()
+        labels_test['task1'] = le.fit_transform(labels_test['task1'])
+        le = LabelEncoder()
+        labels_test['task2'] = le.fit_transform(labels_test['task2'])
+
+        # data = data.drop(columns=['tweet_id', 'task1', 'task2', 'language', 'ID'])
+
+        df = pd.DataFrame.from_dict({
+            'tweets': data['text'],
+            'class': data[extension_task]
+        })
+
+    elif extension_type == 'sentiment':
+        pass
+    else:
+        raise Exception('Unknown dataset name.')
 
     return dict(
         cleaned_dataset=df
     )
-
-
-def plot_lengths(
-        cleaned_data: pd.DataFrame
-) -> Any:
-    """
-
-    :param cleaned_data:
-    :return:
-    """
-    copy_df = cleaned_data.copy().drop(columns='class')
-
-    lengths = copy_df['tweets'].apply(lambda x: len(x))
-    copy_df['length'] = lengths
-    lengths_plot = copy_df.plot.hist(by='length', title='Lengths distribution')
-    print(type(lengths_plot.get_figure()))
-    return lengths_plot.get_figure()
-
-
-def plot_class_distributions(
-        cleaned_data: pd.DataFrame
-) -> Any:
-    """
-
-    :param cleaned_data:
-    :return:
-    """
-    distribution_plot = cleaned_data.plot.hist(
-        by='class',
-        bins=3,
-        title='Class distribution',
-        xticks=[0.25, 1, 1.75],
-        xlabel='class'
-    )
-
-    distribution_plot.set_xticklabels(
-        ['hate_speech',
-         'offensive_language',
-         'neither']
-    )
-
-    print(type(distribution_plot.get_figure()))
-    return distribution_plot.get_figure()
 
 
 def prepare_data(cleaned_dataset: pd.DataFrame,

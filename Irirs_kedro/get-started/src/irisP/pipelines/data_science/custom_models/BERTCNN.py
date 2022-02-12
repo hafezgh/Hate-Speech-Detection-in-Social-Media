@@ -7,20 +7,20 @@ from torch import nn
 
 class BERTCNN(nn.Module):
 
-    def __init__(self, model_name='bert-base-uncased', device='cuda'):
+    def __init__(self, model_name='bert-base-uncased', device='cuda', num_classes=3):
         super(BERTCNN, self).__init__()
         self.bert = BertModel.from_pretrained(model_name).to(device)
 
-        self.conv = nn.Conv2d(in_channels=13, out_channels=13, kernel_size=(3, 768), padding='valid').to(device)
+        self.conv = nn.Conv2d(in_channels=13, out_channels=13, kernel_size=(num_classes, 768), padding='valid').to(device)
         self.relu = nn.ReLU()
         # change the kernel size either to (3,1), e.g. 1D max pooling
         # or remove it altogether
-        self.pool = nn.MaxPool2d(kernel_size=(3, 1), stride=1).to(device)
+        self.pool = nn.MaxPool2d(kernel_size=(num_classes, 1), stride=1).to(device)
         self.dropout = nn.Dropout(0.1)
         # be careful here, this needs to be changed according to your max pooling
         # without pooling: 443, with 3x1 pooling: 416
         # FC
-        self.fc = nn.Linear(416, 3).to(device) ## 416, 66004???
+        self.fc = nn.Linear(416, num_classes).to(device) ## 416, 66004???
         self.flat = nn.Flatten()
         self.softmax = nn.LogSoftmax(dim=1).to(device)
 

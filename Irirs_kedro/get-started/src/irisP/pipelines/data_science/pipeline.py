@@ -47,6 +47,7 @@ def create_pipeline(**kwargs):
                         "params:training_type",
                         "params:train_args",
                         "params:device",
+                        "params:num_classes",
                         "train_dataset",
                         "eval_dataset"],
                 outputs=dict(
