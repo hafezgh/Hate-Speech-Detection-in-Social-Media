@@ -202,7 +202,6 @@ def train(
         training_type: str,
         train_args: Dict[str, Any],
         device: str,
-        num_classes: int,
         train_dataset: datasets.Dataset,
         eval_dataset: datasets.Dataset,
 ) -> Dict[str, Any]:

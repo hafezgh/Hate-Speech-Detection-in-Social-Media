@@ -42,7 +42,7 @@ def create_pipeline(**kwargs):
         [
             node(
                 func=clean_data,
-                inputs=["params: dataset",
+                inputs=["params:dataset",
                         "params:multilingual_task",
                         "labeled_dataset"],
                 outputs=dict(
