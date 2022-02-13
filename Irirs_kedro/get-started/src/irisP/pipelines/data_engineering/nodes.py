@@ -73,7 +73,7 @@ def clean_data(
     :return:
     """
 
-    if dataset == 'davidson':
+    if dataset in ["davidson", "waseem"]:
         data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
         tweets = data['tweet'].tolist()
         classes = data['class']
@@ -120,8 +120,8 @@ def clean_data(
             'class': classes
         })
 
-    elif dataset == 'waseem':
-        pass
+    # elif dataset == 'waseem':
+    #     pass
     elif dataset == 'multilingual_extension':
         assert(multilingual_task == 'task1' or multilingual_task == 'task2')
 
