@@ -181,7 +181,7 @@ def clean_data(
 
         df = pd.DataFrame.from_dict({
             'tweets': data['text'],
-            'class': data[multilingual_task]
+            'class': labels[multilingual_task]
         })
 
     elif dataset == 'sentiment':
