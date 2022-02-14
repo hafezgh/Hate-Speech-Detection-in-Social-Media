@@ -33,7 +33,6 @@ Delete this when you start working on your own Kedro project.
 """
 
 from kedro.pipeline import Pipeline, node
-
 from .nodes import split_data, clean_data, prepare_data
 
 
@@ -44,7 +43,8 @@ def create_pipeline(**kwargs):
                 func=clean_data,
                 inputs=["params:dataset",
                         "params:multilingual_task",
-                        "labeled_dataset"],
+                        "davidson",
+                        "waseem"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
                 ),

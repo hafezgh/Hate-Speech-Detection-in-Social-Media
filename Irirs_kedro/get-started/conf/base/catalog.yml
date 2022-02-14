@@ -42,14 +42,10 @@
 # This is a data set used by the "Hello World" example pipeline provided with the project
 # template. Please feel free to remove it once you remove the example pipeline.
 
-labeled_dataset:
+davidson:
   type: pandas.CSVDataSet
   filepath: data/01_raw/labeled_data.csv
 
-lengths_plot:
-  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
-  filepath: data/02_intermediate/lengths_plot.png
-
-class_distributions:
-  type: kedro.extras.datasets.matplotlib.MatplotlibWriter
-  filepath: data/02_intermediate/class_distributions.png
+waseem:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/waseem_available.csv

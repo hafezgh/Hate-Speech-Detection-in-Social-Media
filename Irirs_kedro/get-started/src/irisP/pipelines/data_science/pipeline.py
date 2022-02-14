@@ -46,6 +46,7 @@ def create_pipeline(**kwargs):
                         "params:model_name",
                         "params:dataset",
                         "params:sentence_max_length",
+                        "params:learning_rate",
                         "params:training_type",
                         "params:train_args",
                         "params:device",

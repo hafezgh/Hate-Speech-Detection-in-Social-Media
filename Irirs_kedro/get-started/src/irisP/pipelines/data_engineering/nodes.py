@@ -63,17 +63,21 @@ def _tokenizer_wrapper(batch, tokenizer, tokenizer_max_length):
 def clean_data(
         dataset: str,
         multilingual_task: str,
-        data: pd.DataFrame
+        davidson_data: pd.DataFrame,
+        waseem_data: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
     :param dataset:
     :param multilingual_task:
-    :param data:
+    :param davidson_data:
+    :param waseem_data:
     :return:
     """
 
     if dataset in ["davidson", "waseem"]:
+        data = davidson_data if dataset == "davidson" else waseem_data
+        print(data['label'].unique())
         data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
         tweets = data['tweet'].tolist()
         classes = data['class']

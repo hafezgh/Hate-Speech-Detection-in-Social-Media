@@ -199,12 +199,27 @@ def train(
         model_name: str,
         dataset: str,
         sentence_max_length: int,
+        learning_rate: float,
         training_type: str,
         train_args: Dict[str, Any],
         device: str,
         train_dataset: datasets.Dataset,
         eval_dataset: datasets.Dataset,
 ) -> Dict[str, Any]:
+    """
+
+    :param BERT_model:
+    :param model_name:
+    :param dataset:
+    :param sentence_max_length:
+    :param learning_rate:
+    :param training_type:
+    :param train_args:
+    :param device:
+    :param train_dataset:
+    :param eval_dataset:
+    :return:
+    """
 
     # Set number of classes
     if dataset in ["davidson", "waseem"]:
@@ -274,7 +289,7 @@ def train(
         model = model.to(device)
 
         # define the optimizer
-        optimizer = AdamW(model.parameters(), lr=2e-5)
+        optimizer = AdamW(model.parameters(), lr=learning_rate)
 
         # loss function
         cross_entropy = nn.NLLLoss()
