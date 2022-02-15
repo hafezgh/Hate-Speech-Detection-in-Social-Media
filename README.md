@@ -40,7 +40,9 @@ In order to change the experiment parameters run:
 - training_type: implementation to use (classic: paper replica, transformers: transformers library adaptation)
 
 Additional modifiable parameters can be found in the
-*Iris_kedro/get-started/conf/base/parameters.yml* file.
+*Iris_kedro/get-started/conf/base/parameters.yml* file, such as
+learning rates, train-valid-test ratios, tokenizer's max length,
+batch size, etc.
 
 This implementation consists of two pipelines: data engineering (de) and data science (ds).
 The data engineering pipeline manages the pre-processing steps of the datasets, while the data
