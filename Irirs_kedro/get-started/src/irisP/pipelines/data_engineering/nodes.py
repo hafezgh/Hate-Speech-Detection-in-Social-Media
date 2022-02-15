@@ -32,6 +32,7 @@ PLEASE DELETE THIS FILE ONCE YOU START WORKING ON YOUR OWN PROJECT!
 """
 import copy
 
+import numpy as np
 from sklearn.model_selection import train_test_split
 import re
 import string
@@ -43,10 +44,12 @@ from datasets import Dataset
 from typing import Any, Dict
 
 
-def _tokenizer_wrapper(batch, tokenizer, tokenizer_max_length):
+def _tokenizer_wrapper(batch,
+                       tokenizer,
+                       tokenizer_max_length):
     # tokenize the inputs and labels
     inputs = tokenizer(
-        batch["tweets"],
+        batch["text"],
         max_length=tokenizer_max_length,
         pad_to_max_length=True,
         padding="max_length",
@@ -64,7 +67,10 @@ def clean_data(
         dataset: str,
         multilingual_task: str,
         davidson_data: pd.DataFrame,
-        waseem_data: pd.DataFrame
+        waseem_data: pd.DataFrame,
+        ctc: pd.DataFrame,
+        multilingual: pd.DataFrame,
+        sentiment: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
@@ -72,6 +78,9 @@ def clean_data(
     :param multilingual_task:
     :param davidson_data:
     :param waseem_data:
+    :param ctc:
+    :param multilingual:
+    :param sentiment:
     :return:
     """
 
@@ -120,76 +129,31 @@ def clean_data(
             new_values.append(text)
 
         df = pd.DataFrame.from_dict({
-            'tweets': new_values,
+            'text': new_values,
             'class': classes
         })
-
-    # elif dataset == 'waseem':
-    #     pass
     elif dataset == 'multilingual_extension':
         assert(multilingual_task == 'task1' or multilingual_task == 'task2')
 
-        # Get datasets
-        url_english_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_en_train_new_a' \
-                            '.xlsx?raw=true '
-        url_german_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_de_train_new_a' \
-                           '.xlsx?raw=true '
-        url_hindi_train = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hasoc_2020_hi_train_a.xlsx' \
-                          '?raw=true '
-        url_english_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/english_test_1509.csv?raw' \
-                           '=true '
-        url_german_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/german_test_1509.csv?raw=true'
-        url_hindi_test = 'https://github.com/suman101112/hasoc-fire-2020/blob/main/2020/hindi_test_1509.csv?raw=true'
-
-        # Read datasets
-        ## English
-        data_en = pd.read_excel(url_english_train)
-        data_en_test = pd.read_csv(url_english_test)
-
-        ## German
-        data_de = pd.read_excel(url_german_train)
-        data_de_test = pd.read_csv(url_german_test)
-
-        ## Hindi
-        data_hi = pd.read_excel(url_hindi_train)
-        data_hi_test = pd.read_csv(url_hindi_test)
-
-        # Set labels
-        data_en['language'] = 0
-        data_en_test['language'] = 0
-
-        data_de['language'] = 1
-        data_de_test['language'] = 1
-
-        data_hi['language'] = 2
-        data_hi_test['language'] = 2
-
-        data = copy.deepcopy(data_en)
-        data = data.append(data_de, ignore_index=True)
-        data = data.append(data_hi, ignore_index=True)
-        data_test = copy.deepcopy(data_en_test)
-        data_test = data_test.append(data_de_test, ignore_index=True)
-        data_test = data_test.append(data_hi_test, ignore_index=True)
-
-        labels = data[['task1', 'task2', 'language']]
-        le = LabelEncoder()
-        labels['task1'] = le.fit_transform(labels['task1'])
-        le = LabelEncoder()
-        labels['task2'] = le.fit_transform(labels['task2'])
-
-        labels_test = data_test[['task1', 'task2', 'language']]
-        le = LabelEncoder()
-        labels_test['task1'] = le.fit_transform(labels_test['task1'])
-        le = LabelEncoder()
-        labels_test['task2'] = le.fit_transform(labels_test['task2'])
+        data = multilingual
 
         df = pd.DataFrame.from_dict({
-            'tweets': data['text'],
-            'class': labels[multilingual_task]
+            'text': data['text'],
+            'class': data[multilingual_task]
         })
-
-    elif dataset == 'sentiment':
+    elif dataset == "sentiment":
         pass
+    elif dataset == "ctc":
+        df = ctc.copy()
+        df.columns = ["class", "text"]
+
+        df['class'] = df['class'].map(
+            lambda x: int(x.split('__label__')[1])
+        )
+
+        df['text'] = df['text'].map(
+            lambda x: x.split('study interventions are ')[1]
+        )
     else:
         raise Exception("Unknown dataset")
 
@@ -213,14 +177,14 @@ def prepare_data(cleaned_dataset: pd.DataFrame,
     """
     tokenizer = BertTokenizer.from_pretrained(model_name, do_lower_case=True)
 
-    # Tokenize tweets
+    # Tokenize texts
     train_ds = Dataset.from_pandas(cleaned_dataset)
 
     train_ds = train_ds.map(
         lambda x: _tokenizer_wrapper(x, tokenizer, tokenizer_max_length),
         batched=True,
         batch_size=tokenize_batch_size,
-        remove_columns=["tweets", "class"]
+        remove_columns=["text", "class"]
     )
 
     train_ds.set_format(
@@ -234,16 +198,31 @@ def prepare_data(cleaned_dataset: pd.DataFrame,
 
 
 def split_data(dataset: pd.DataFrame,
+               unbalanced: bool,
+               smote: bool,
                train_size_ratio: float,
                test_size_ratio: float
 ) -> Dict[str, pd.DataFrame]:
     """
 
     :param dataset:
+    :param unbalanced:
+    :param smote:
     :param train_size_ratio:
     :param test_size_ratio:
     :return:
     """
+
+    if unbalanced:
+        df = dataset.to_pandas()
+        train_df, valtest_df = train_test_split(df, train_size=train_size_ratio, stratify=df['class'])
+        val_df, test_df = train_test_split(valtest_df, test_size=test_size_ratio, stratify=valtest_df['class'])
+
+        return dict(
+            train_dataset=train_df,
+            eval_dataset=val_df,
+            test_dataset=test_df,
+        )
 
     train_testvalid = dataset.train_test_split(train_size=train_size_ratio)
     test_valid = train_testvalid['test'].train_test_split(test_size=test_size_ratio)

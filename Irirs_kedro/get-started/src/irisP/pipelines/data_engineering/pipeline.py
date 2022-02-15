@@ -44,7 +44,9 @@ def create_pipeline(**kwargs):
                 inputs=["params:dataset",
                         "params:multilingual_task",
                         "davidson",
-                        "waseem"],
+                        "waseem",
+                        "ctc",
+                        "multilingual"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
                 ),
