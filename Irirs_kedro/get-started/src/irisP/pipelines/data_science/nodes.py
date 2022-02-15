@@ -289,7 +289,7 @@ def train(
         model = model.to(device)
 
         # define the optimizer
-        optimizer = AdamW(model.parameters(), lr=learning_rate)
+        optimizer = AdamW(model.parameters(), lr=float(learning_rate))
 
         # loss function
         cross_entropy = nn.NLLLoss()
