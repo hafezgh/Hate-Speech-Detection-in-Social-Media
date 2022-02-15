@@ -66,18 +66,18 @@ def _tokenizer_wrapper(batch,
 def clean_data(
         dataset: str,
         multilingual_task: str,
-        davidson_data: pd.DataFrame,
-        waseem_data: pd.DataFrame,
-        ctc: pd.DataFrame,
+        davidson: pd.DataFrame,
+        waseem: pd.DataFrame,
+        # ctc: pd.DataFrame,
         multilingual: pd.DataFrame,
-        sentiment: pd.DataFrame
+        # sentiment: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
     :param dataset:
     :param multilingual_task:
-    :param davidson_data:
-    :param waseem_data:
+    :param davidson:
+    :param waseem:
     :param ctc:
     :param multilingual:
     :param sentiment:
@@ -85,8 +85,8 @@ def clean_data(
     """
 
     if dataset in ["davidson", "waseem"]:
-        data = davidson_data if dataset == "davidson" else waseem_data
-        print(data['label'].unique())
+        data = davidson if dataset == "davidson" else waseem
+        # print(data['label'].unique())
         data = data.drop(['count', 'hate_speech', 'offensive_language', 'neither'], axis=1)
         tweets = data['tweet'].tolist()
         classes = data['class']
@@ -132,7 +132,8 @@ def clean_data(
             'text': new_values,
             'class': classes
         })
-    elif dataset == 'multilingual_extension':
+
+    elif dataset == 'multilingual':
         assert(multilingual_task == 'task1' or multilingual_task == 'task2')
 
         data = multilingual
@@ -141,19 +142,19 @@ def clean_data(
             'text': data['text'],
             'class': data[multilingual_task]
         })
-    elif dataset == "sentiment":
-        pass
-    elif dataset == "ctc":
-        df = ctc.copy()
-        df.columns = ["class", "text"]
-
-        df['class'] = df['class'].map(
-            lambda x: int(x.split('__label__')[1])
-        )
-
-        df['text'] = df['text'].map(
-            lambda x: x.split('study interventions are ')[1]
-        )
+    # elif dataset == "sentiment":
+    #     pass
+    # elif dataset == "ctc":
+    #     df = ctc.copy()
+    #     df.columns = ["class", "text"]
+    #
+    #     df['class'] = df['class'].map(
+    #         lambda x: int(x.split('__label__')[1])
+    #     )
+    #
+    #     df['text'] = df['text'].map(
+    #         lambda x: x.split('study interventions are ')[1]
+    #     )
     else:
         raise Exception("Unknown dataset")
 
@@ -213,8 +214,9 @@ def split_data(dataset: pd.DataFrame,
 
     if unbalanced:
         df = dataset.to_pandas()
-        train_df, valtest_df = train_test_split(df, train_size=train_size_ratio, stratify=df['class'])
-        val_df, test_df = train_test_split(valtest_df, test_size=test_size_ratio, stratify=valtest_df['class'])
+        # print(df.head())
+        train_df, valtest_df = train_test_split(df, train_size=train_size_ratio, stratify=df['label'])
+        val_df, test_df = train_test_split(valtest_df, test_size=test_size_ratio, stratify=valtest_df['label'])
 
         return dict(
             train_dataset=train_df,

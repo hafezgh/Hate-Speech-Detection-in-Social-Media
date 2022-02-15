@@ -50,9 +50,9 @@ waseem:
   type: pandas.CSVDataSet
   filepath: data/01_raw/waseem_available.csv
 
-ctc:
-  type: pandas.CSVDataSet
-  filepath: data/01_raw/labeledEligibilitySample1000000.csv
+#ctc:
+#  type: pandas.CSVDataSet
+#  filepath: data/01_raw/labeledEligibilitySample1000000.csv
 
 multilingual:
   type: pandas.CSVDataSet

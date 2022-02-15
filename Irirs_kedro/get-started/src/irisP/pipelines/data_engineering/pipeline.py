@@ -45,7 +45,7 @@ def create_pipeline(**kwargs):
                         "params:multilingual_task",
                         "davidson",
                         "waseem",
-                        "ctc",
+                        # "ctc",
                         "multilingual"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
@@ -66,7 +66,7 @@ def create_pipeline(**kwargs):
             node(
                 func=split_data,
                 inputs=["dataset",
-                        "params:unbalanced"
+                        "params:unbalanced",
                         "params:train_size_ratio",
                         "params:test_size_ratio"],
                 outputs=dict(
@@ -76,15 +76,5 @@ def create_pipeline(**kwargs):
                 ),
                 name="split"
             ),
-            # node(
-            #     func=plot_lengths,
-            #     inputs="cleaned_dataset",
-            #     outputs="lengths_plot"
-            # ),
-            # node(
-            #     func=plot_class_distributions,
-            #     inputs="cleaned_dataset",
-            #     outputs="class_distributions"
-            # )
         ]
     )
