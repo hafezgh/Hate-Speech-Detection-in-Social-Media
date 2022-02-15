@@ -46,7 +46,8 @@ def create_pipeline(**kwargs):
                         "davidson",
                         "waseem",
                         # "ctc",
-                        "multilingual"],
+                        "multilingual",
+                        "imdb"],
                 outputs=dict(
                     cleaned_dataset="cleaned_dataset"
                 ),

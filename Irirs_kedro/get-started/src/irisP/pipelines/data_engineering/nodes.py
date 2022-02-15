@@ -70,7 +70,7 @@ def clean_data(
         waseem: pd.DataFrame,
         # ctc: pd.DataFrame,
         multilingual: pd.DataFrame,
-        # sentiment: pd.DataFrame
+        imdb: pd.DataFrame
 ) -> Dict[str, pd.DataFrame]:
     """
 
@@ -80,7 +80,7 @@ def clean_data(
     :param waseem:
     :param ctc:
     :param multilingual:
-    :param sentiment:
+    :param imdb:
     :return:
     """
 
@@ -142,8 +142,13 @@ def clean_data(
             'text': data['text'],
             'class': data[multilingual_task]
         })
-    # elif dataset == "sentiment":
-    #     pass
+    elif dataset == "imdb":
+        data = imdb
+
+        df = pd.DataFrame.from_dict({
+            'text': data['DATA_COLUMN'],
+            'class': data['LABEL_COLUMN']
+        })
     # elif dataset == "ctc":
     #     df = ctc.copy()
     #     df.columns = ["class", "text"]
