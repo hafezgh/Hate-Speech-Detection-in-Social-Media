@@ -199,7 +199,6 @@ def prepare_data(cleaned_dataset: pd.DataFrame,
 
 def split_data(dataset: pd.DataFrame,
                unbalanced: bool,
-               smote: bool,
                train_size_ratio: float,
                test_size_ratio: float
 ) -> Dict[str, pd.DataFrame]:
@@ -207,7 +206,6 @@ def split_data(dataset: pd.DataFrame,
 
     :param dataset:
     :param unbalanced:
-    :param smote:
     :param train_size_ratio:
     :param test_size_ratio:
     :return:

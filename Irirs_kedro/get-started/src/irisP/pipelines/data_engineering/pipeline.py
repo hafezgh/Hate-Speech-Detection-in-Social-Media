@@ -66,6 +66,7 @@ def create_pipeline(**kwargs):
             node(
                 func=split_data,
                 inputs=["dataset",
+                        "params:unbalanced"
                         "params:train_size_ratio",
                         "params:test_size_ratio"],
                 outputs=dict(
