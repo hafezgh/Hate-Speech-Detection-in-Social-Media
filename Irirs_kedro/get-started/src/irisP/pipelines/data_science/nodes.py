@@ -224,7 +224,7 @@ def train(
     # Set number of classes
     if dataset in ["davidson", "waseem"]:
         num_classes = 3
-    elif dataset in ["sentiment", "multilingual_extension"]:
+    elif dataset in ["sentiment", "multilingual"]:
         num_classes = 2
     else:
         raise Exception("Unclear number of classes")

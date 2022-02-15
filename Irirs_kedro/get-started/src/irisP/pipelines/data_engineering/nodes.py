@@ -212,17 +212,17 @@ def split_data(dataset: pd.DataFrame,
     :return:
     """
 
-    if unbalanced:
-        df = dataset.to_pandas()
-        # print(df.head())
-        train_df, valtest_df = train_test_split(df, train_size=train_size_ratio, stratify=df['label'])
-        val_df, test_df = train_test_split(valtest_df, test_size=test_size_ratio, stratify=valtest_df['label'])
-
-        return dict(
-            train_dataset=train_df,
-            eval_dataset=val_df,
-            test_dataset=test_df,
-        )
+    # if unbalanced:
+    #     df = dataset.to_pandas()
+    #     # print(df.head())
+    #     train_df, valtest_df = train_test_split(df, train_size=train_size_ratio, stratify=df['label'])
+    #     val_df, test_df = train_test_split(valtest_df, test_size=test_size_ratio, stratify=valtest_df['label'])
+    #
+    #     return dict(
+    #         train_dataset=train_df,
+    #         eval_dataset=val_df,
+    #         test_dataset=test_df,
+    #     )
 
     train_testvalid = dataset.train_test_split(train_size=train_size_ratio)
     test_valid = train_testvalid['test'].train_test_split(test_size=test_size_ratio)
