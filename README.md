@@ -14,7 +14,8 @@ dataset for determining eligibility of cancer patients for clinical
 trials. The second extension is adapting the current models to be 
 compatible with multi-lingual hate speech detection.
 
-A Kedro implementation of this project can be found in folder "Iris_kedro".
+A Kedro implementation of this project can be found in folder "Iris_kedro". 
+This implementation is based on the kedro iris project template.
 It is possible to run the experiments, firstly by installing Kedro and run
 the Kedro framework with the desire parameters. A Collab notebook implementation
 of how to use kedro can be found in the *KedroTest.ipynb* notebook.
