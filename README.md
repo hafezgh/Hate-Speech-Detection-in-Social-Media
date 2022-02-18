@@ -17,7 +17,7 @@ compatible with multi-lingual hate speech detection.
 A Kedro implementation of this project can be found in folder "Iris_kedro". 
 This implementation is based on the kedro iris project template.
 It is possible to run the experiments, firstly by installing Kedro and run
-the Kedro framework with the desire parameters. A Collab notebook implementation
+the Kedro framework with the desired parameters. A Collab notebook implementation
 of how to use kedro can be found in the *KedroTest.ipynb* notebook.
 
 For installing Kedro use the following code: 
@@ -60,3 +60,5 @@ kedro viz
 ```
 
 Further uses of the Kedro framework can be found in https://kedro.readthedocs.io/en/stable/index.html
+
+It is also possible to run each experiment outside the Kedro framework using its own notebook from the designated folders.
