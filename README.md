@@ -1,4 +1,4 @@
-# The final project for the Deep Natural Language Processing Course @PoliTO
+# The final project for the Deep Natural Language Processing Course @PoliTO, A.Y. 2021-22
 
 In  this  project,  we  implement and replicate the experiments in 
 first work that proposed BERT fine-tuning strategies for hate 
