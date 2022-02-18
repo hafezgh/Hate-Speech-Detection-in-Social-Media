@@ -1,4 +1,4 @@
-# Hate-Speech-Detection-in-Social-Media
+# The final project for the Deep Natural Language Processing Course @PoliTO
 
 In  this  project,  we  implement and replicate the experiments in 
 first work that proposed BERT fine-tuning strategies for hate 
