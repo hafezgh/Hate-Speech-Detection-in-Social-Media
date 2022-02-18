@@ -61,4 +61,4 @@ kedro viz
 
 Further uses of the Kedro framework can be found in https://kedro.readthedocs.io/en/stable/index.html
 
-It is also possible to run each experiment outside the Kedro framework using its own notebook from the designated folders.
+It is also possible to run each experiment outside the Kedro framework using its own notebook from the designated folders (four folders for the four paradigms are included: the origanl experiment, the sentiment classification task, the cancer treatment eligibility task, and the multi-lingual extension).
